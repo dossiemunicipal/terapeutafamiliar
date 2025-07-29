@@ -4,11 +4,15 @@ Configuração centralizada para o MVP de Terapia Familiar
 
 import os
 from crewai import LLM
-from dotenv import load_dotenv
 import logging
 
-# Carregar variáveis de ambiente
-load_dotenv()
+# Tentar carregar .env para desenvolvimento local
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv não disponível - isso é normal no Streamlit Cloud
+    pass
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
@@ -23,8 +27,8 @@ class Config:
     
     # Configurações do LLM
     MODEL = os.getenv("MODEL", "gemini/gemini-1.5-flash")
-    LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", 0.7))
-    LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", 2048))
+    LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.7"))
+    LLM_MAX_TOKENS = int(os.getenv("LLM_MAX_TOKENS", "2048"))
     
     # Configurações da aplicação
     APP_TITLE = os.getenv("APP_TITLE", "Terapia Familiar MVP")
@@ -63,7 +67,21 @@ class Config:
         """Valida se todas as configurações necessárias estão presentes"""
         
         if not cls.GEMINI_API_KEY:
-            raise ValueError("❌ GEMINI_API_KEY não encontrada no arquivo .env")
+            # Mensagem mais informativa para deployment
+            error_msg = """
+❌ GEMINI_API_KEY não configurada!
+
+Para configurar no Streamlit Cloud:
+1. Vá para https://share.streamlit.io
+2. Clique em 'Settings' do seu app
+3. Na aba 'Secrets', adicione:
+   GEMINI_API_KEY = "sua_chave_aqui"
+
+Para desenvolvimento local:
+1. Crie um arquivo .env
+2. Adicione: GEMINI_API_KEY=sua_chave_aqui
+            """
+            raise ValueError(error_msg.strip())
         
         logger.info("✅ Configuração validada com sucesso")
         logger.info(f"📱 Modelo: {cls.MODEL}")

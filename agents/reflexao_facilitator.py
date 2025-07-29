@@ -76,7 +76,6 @@ class ReflexaoFacilitator:
             tools=[],
             llm=self.llm,
             verbose=Config.VERBOSE,
-            memory=Config.ENABLE_MEMORY,
             allow_delegation=False
         )
     

@@ -65,7 +65,6 @@ class TerapeutaPrincipal:
             tools=[],
             llm=self.llm,  # Usar o objeto LLM do Config
             verbose=Config.VERBOSE,
-            memory=Config.ENABLE_MEMORY,
             allow_delegation=True  # Necessário para processo hierárquico no CrewAI
         )
     
